@@ -27,7 +27,7 @@ class Car{
         this.controls = new Controls(controlType);
     }
 
-    draw(ctx,colour){
+    draw(ctx,colour,drawSensor=false){
         // old method of drawing car by rotating and translating the context
         // -----------------------------------------------------------------
         // ctx.save();
@@ -76,7 +76,7 @@ class Car{
             ctx.fill();
         }
 
-        if(this.sensor){
+        if(this.sensor && drawSensor){
             this.sensor.draw(ctx);
 
         }

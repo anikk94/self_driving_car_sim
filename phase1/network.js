@@ -23,6 +23,33 @@ class NeuralNetwork{
         // actions are the outputs
         return outputs
     }
+
+    // genetic algorithm?
+    // 1 -> complete randomize (like normal)
+    // 0.1 -> small amount of change/randomization
+    static mutate(network,amount=1){
+        // mutate biases
+        network.levels.forEach(level=>{
+            for(let i=0;i<level.biases.length;i++){
+                level.biases[i]=lerp(
+                    level.biases[i],
+                    Math.random()*2-1,
+                    amount
+                )
+            }
+            // mutate weights
+            for(let i=0;i<level.weights.length;i++){
+                for(let j=0;j<level.weights[i].length;j++){
+                    level.weights[i][j]=lerp(
+                        level.weights[i][j],
+                        Math.random()*2-1,
+                        amount
+                    )
+                }
+            }
+        })
+        
+    }
 }
 
 // fully connected network layerneuronCount
