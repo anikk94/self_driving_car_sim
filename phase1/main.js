@@ -12,7 +12,7 @@ const road = new Road(carCanvas.width/2, carCanvas.width*0.9, 3);
 // const car = new Car(road.getLaneCenter(1), 100, 30, 50,"AI");
 
 // searching for the best candidate car 100 in parallel
-const N=0;
+const N=300;
 const cars=generateCars(N);
 let bestCar=cars[0];
 const mutation = true;
