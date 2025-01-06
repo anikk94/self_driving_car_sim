@@ -1,5 +1,5 @@
 class Car{
-    constructor(x, y, width, height,controlType,maxSpeed=3){
+    constructor(x, y, width, height,controlType,maxSpeed=3,colour="blue"){
         this.x = x;
         this.y = y;
         this.width = width;
@@ -25,9 +25,35 @@ class Car{
             );
         }
         this.controls = new Controls(controlType);
+
+
+        this.img=new Image();
+        this.img.src="car.png";
+
+        this.mask=document.createElement("canvas");
+        this.mask.width=width;
+        this.mask.height=height;
+
+        const maskCtx=this.mask.getContext("2d");
+        this.img.onload=()=>{
+            maskCtx.fillStyle=colour;
+            maskCtx.rect(0,0,this.width,this.height);
+            maskCtx.fill();
+
+            maskCtx.globalCompositeOperation="destination-atop";
+            maskCtx.drawImage(this.img,0,0,this.width,this.height);
+        }
     }
 
-    draw(ctx,colour,drawSensor=false){
+    draw(ctx,drawSensor=false){
+    // draw(ctx,colour,drawSensor=false){
+
+    // draw sensor
+    // before car so that lines inside the car from center of sensor
+    // don't show            
+    if(this.sensor && drawSensor){
+        this.sensor.draw(ctx);
+    }
         // old method of drawing car by rotating and translating the context
         // -----------------------------------------------------------------
         // ctx.save();
@@ -60,26 +86,41 @@ class Car{
 
         // new method of drawing car as polygon
         // ------------------------------------
-        if(this.polygon){
-            if(this.damaged){
-                ctx.fillStyle="gray";
-            } else {
-                // ctx.fillStyle="black";
-                ctx.fillStyle=colour;
-            }
+        // if(this.polygon){
+        //     if(this.damaged){
+        //         ctx.fillStyle="gray";
+        //     } else {
+        //         // ctx.fillStyle="black";
+        //         ctx.fillStyle=colour;
+        //     }
 
-            ctx.beginPath();
-            ctx.moveTo(this.polygon[0].x,this.polygon[0].y);
-            for(let i=1;i<this.polygon.length;i++){
-                ctx.lineTo(this.polygon[i].x,this.polygon[i].y);
-            }
-            ctx.fill();
+        //     ctx.beginPath();
+        //     ctx.moveTo(this.polygon[0].x,this.polygon[0].y);
+        //     for(let i=1;i<this.polygon.length;i++){
+        //         ctx.lineTo(this.polygon[i].x,this.polygon[i].y);
+        //     }
+        //     ctx.fill();
+        // }
+
+        // car image drawing with old (non polygon drawing method)
+        // -------------------------------------------------------
+        ctx.save();
+        ctx.translate(this.x,this.y);
+        ctx.rotate(-this.angle);
+        if(!this.damaged){
+            ctx.drawImage(this.mask,
+                -this.width/2,
+                -this.height/2,
+                this.width,
+                this.height);
+            ctx.globalCompositeOperation="multiply";
         }
-
-        if(this.sensor && drawSensor){
-            this.sensor.draw(ctx);
-
-        }
+        ctx.drawImage(this.img,
+            -this.width/2,
+            -this.height/2,
+            this.width,
+            this.height);
+        ctx.restore();
     }
 
     update(roadBorders,traffic){
